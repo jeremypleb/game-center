@@ -1,13 +1,13 @@
 # game-center
 
 # status
--index.html is currentyl empty; just a placeholder
--game.html has the code for reversi
+-index.html is currenty empty; just a placeholder <br/>
+-game.html has the code for reversi <br/>
 
 # TODO
--add firebase authentication
--create game
--let users join available games
+-add firebase authentication <br/>
+-create game <br/>
+-let users join available games <br/>
 
 # maybe
-show win-loss record for user
+show win-loss record for user <br/>
