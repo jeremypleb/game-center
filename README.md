@@ -4,10 +4,10 @@
 -index.html is currentyl empty; just a placeholder
 -game.html has the code for reversi
 
-#TODO
+# TODO
 -add firebase authentication
 -create game
 -let users join available games
 
-#maybe
+# maybe
 show win-loss record for user
