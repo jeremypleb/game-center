@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">   
+<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"> 
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.8.0/firebase.js"></script>
+<script src="https://cdn.firebase.com/libs/angularfire/2.1.0/angularfire.min.js"></script>
+<link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+<style>
+  
+  img {
+    height: 25px;
+  }
+  
+  body {
+    background-color: white;
+  }
+  
+  .header, .login, .status, .gameInfo {
+    text-align: center;
+  }
+  
+  .status, .gameInfo {
+    font-size: larger;
+  }
+  
+  .game {
+      background-color:#008866;
+      border: 13px solid black;
+      box-sizing: border-box;
+    }
+    .game:hover {
+      cursor: crosshair;
+    }
+   
+    @keyframes grow-b {
+      from { transform: /*scale(3.1)*/ rotateY(180deg); }
+    }
+    @keyframes grow-w {
+      from { transform: /*scale(3.1)*/ rotateX(180deg); }
+    }
+    
+    .chip-b {
+      animation: grow-b 0.5s;
+        transform: rotateY(0deg);
+        transform-origin: center;
+    }
+    .chip-w {
+      animation: grow-w 0.5s;
+        transform: rotateX(0deg);
+        transform-origin:center;
+    }
+    .game-wrapper {
+      max-width: 75vh;
+      margin: auto;
+    }
+</style>
+
+</head>
+
+<script>
+  // Initialize Firebase
+  var config = {
+      apiKey: "AIzaSyCXAZOtLlBm047Mg1jI-tYaKQhJ3ScMpA8",
+      authDomain: "auth-example-b4c07.firebaseapp.com",
+      databaseURL: "https://auth-example-b4c07.firebaseio.com",
+      projectId: "auth-example-b4c07",
+      storageBucket: "auth-example-b4c07.appspot.com",
+      messagingSenderId: "75391362222"
+    };
+  firebase.initializeApp(config);
+</script>
+
+<body ng-app="myApp" ng-controller="myCtrl">
+
+<div id="main">
+  <span class="menu-icon" ng-click="openSideNav()" ng-show="loggedIn">&#9776;</span>
+  <!-- Header for the top of the page -->
+    <div class="header" ng-class="{ 'title-left' : navOpen }">
+        <!-- Shows this if the user is logged in -->
+        <h1 class="title"><span ng-show="name != undefined && name != ''">{{name}}'s</span> Game Center</h1>
+    </div>
+
+    <!-- Sign in button if the user is not logged in -->
+    <div ng-show="!loggedIn" class="login-section">
+        <!-- Modify these contents if you want to update how the Sign-in looks -->
+		<h3>Welcome to Game Center! Login with Github to battle your friends in a game of Othello</h3>
+		<br>
+        <button class="login-button" ng-click="showSmallLoader = true; toggleSignIn()">Login With Github</button>
+		<div class="loader-small" ng-show="showSmallLoader"></div>
+		<!--<div class="footer-info">
+			<div>Fhtl Home</div>
+			<div>Contact</div>
+			<div>FamilySearch</div>
+		</div>-->
+    </div>
+
+    <!-- This part is the calendar part -->
+    <div ng-show="loggedIn">
+
+            <!-- Display the month and year of the currently displaying page -->
+            <h1 class="game-title">
+                Othello
+            </h1>
+            <br>
+            <div class="game-wrapper">
+            <svg width='100%' height='100%' viewBox="0 0 100 100" preserveAspectRatio="none" class="game" cng-game>
+                
+                <line ng-repeat="line in lines" x1="0" ng-attr-y1="{{100*line/(lines.length+1)}}%" x2="100%" ng-attr-y2="{{100*line/(lines.length+1)}}%" style="stroke:rgb(0,0,0);stroke-width:2"  vector-effect="non-scaling-stroke"/>
+                <line ng-repeat="line in lines" ng-attr-x1="{{100*line/(lines.length+1)}}%" y1="0" ng-attr-x2="{{100*line/(lines.length+1)}}%" y2="100%" style="stroke:rgb(0,0,0);stroke-width:2"  vector-effect="non-scaling-stroke"/>
+                
+                <defs>
+                <radialGradient id="wGrad">
+                  <stop offset="60%" stop-color="#f5f5f5"/>
+                  <stop offset="95%" stop-color="#ddd"/>
+                </radialGradient>
+
+                <radialGradient id="bGrad">
+                  <stop offset="60%" stop-color="#2a2a2a"/>
+                  <stop offset="95%" stop-color="#111111"/>
+                </radialGradient>
+              </defs>
+              
+              <circle ng-repeat="c in chips" ng-attr-cx="{{c.x}}%" ng-attr-cy="{{c.y}}%" ng-attr-r="{{radius}}%" fill="url(#{{c.color}}Grad)" class='chip-{{c.color}}' />
+            </svg>
+          </div>
+    </div>
+
+<div id="mySidenav" class="sidenav" ng-class="{ 'open-nav' : navOpen}" ng-show="loggedIn">
+  <!--<a href="javascript:void(0)" class="closebtn" ng-click="navOpen = !navOpen">&times;</a>-->
+  <img ng-show="photoURL" ng-src="{{photoURL}}" class="user-image">
+  <a href="" style="text-decoration: none;" >Playing as {{displayName}}</a>
+  <a href="javascript:void(0)" ng-click="toggleSignIn()">Logout</a>
+  <div style="margin-left: 30px;margin-top:15px;">
+    <button class="btn btn-primary ng-isolate-scope" style="height: 33px;width:calc(100% - 30px);" ng-click="startNewGame()" ng-show="!inGame">Start New Game</button>
+    <button class="btn btn-primary ng-isolate-scope" style="height: 33px;width:calc(100% - 30px);" ng-click="removeGame()" ng-show="inGame">Quit Game</button>
+  </div>
+
+  <p class="filter-title" ng-hide="false">Current Matches</p>
+  <div style='column-count:0;margin-left:30px;font-family:courier;font-size:14px;'>
+		<!--<section ng-repeat="(type, color) in eventTypes | orderBy: objectToArray(eventTypes)">-->
+		<button ng-repeat='game in games' ng-click="battleWith(game)">Play with {{game.$value}}</button>
+	</div>
+</div>
+
+<!--<div class="modal-shadow" ng-show = "exporting"></div>-->
+
+<script>
+
+var app = angular.module('myApp', ["firebase"]);
+app.controller('myCtrl', function($scope, $firebaseArray, $window) {
+
+    $scope.onExit = function() {
+      alert("test");
+      $scope.removeGame();
+    };
+
+    function findGame(game) { 
+        return game.$value === $scope.displayName;
+    }
+
+   $window.onbeforeunload =  $scope.onExit;
+
+    $scope.loggedIn = false;
+    $scope.displayName = '';
+
+    $scope.toggleSignIn = function () {
+        if (!firebase.auth().currentUser) {
+          // [START createprovider]
+          var provider = new firebase.auth.GithubAuthProvider();
+          // [END createprovider]
+          // [START addscopes]
+          provider.addScope('repo');
+          // [END addscopes]
+          // [START signin]
+          firebase.auth().signInWithRedirect(provider);
+          // [END signin]
+        } else {
+          // [START signout]
+          $scope.removeGame();
+          firebase.auth().signOut();
+          $scope.loggedIn = false;
+          // [END signout]
+        }
+        // [START_EXCLUDE]
+        //document.getElementById('quickstart-sign-in').disabled = true;
+        // [END_EXCLUDE]
+      }
+    
+    $scope.initFirebase = function() {
+      // Result from Redirect auth flow.
+      // [START getidptoken]
+      firebase.auth().getRedirectResult().then(function(result) {
+        if (result.credential) {
+          // This gives you a GitHub Access Token. You can use it to access the GitHub API.
+          $scope.token = result.credential.accessToken;
+          console.log($scope.token);
+          // [START_EXCLUDE]
+          //document.getElementById('quickstart-oauthtoken').textContent = token;
+        } else {
+          //document.getElementById('quickstart-oauthtoken').textContent = 'null';
+          // [END_EXCLUDE]
+        }
+        // The signed-in user info.
+        var user = result.user;
+      }).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+        // [START_EXCLUDE]
+        if (errorCode === 'auth/account-exists-with-different-credential') {
+          alert('You have already signed up with a different auth provider for that email.');
+          // If you are using multiple auth providers on your app you should handle linking
+          // the user's accounts here.
+        } else {
+          console.error(error);
+        }
+        // [END_EXCLUDE]
+      });
+      // [END getidptoken]
+      // Listening for auth state changes.
+      // [START authstatelistener]
+      firebase.auth().onAuthStateChanged(function(user) {  
+        if (user) {
+          
+          $scope.loggedIn = true;
+          // User is signed in.
+          console.log(user);
+          $scope.displayName = user.displayName || user.email.split('@')[0];
+          $scope.photoURL = user.photoURL;
+//          var email = user.email;
+//          var emailVerified = user.emailVerified;
+//          var photoURL = user.photoURL;
+//          var isAnonymous = user.isAnonymous;
+//          var uid = user.uid;
+//          var providerData = user.providerData;
+
+        } else {
+          
+          $scope.loggedIn = false;
+
+        }
+        
+        $scope.$apply()
+
+      });
+    }
+    
+    $scope.initFirebase();
+
+    var ref = firebase.database().ref().child("games");
+    $scope.games = $firebaseArray(ref);
+    $scope.startNewGame = function() {
+      let result = $scope.games.find(findGame);
+      let name = $scope.displayName;
+      var newGame = name;
+      console.log(newGame);
+      $scope.games.$add(newGame);
+      $scope.inGame = true;
+    }
+
+    $scope.removeGame = function() {
+      let result = $scope.games.find(findGame);
+      console.log(result, $scope.games);
+      if (result != null) {
+        $scope.games.$remove(result);
+      }
+      $scope.inGame = false;
+    }
+
+    $scope.battleWith = function(game) {
+      alert("game between "+$scope.displayName+" and "+game.$value);
+    }
+      
+    $scope.turn = 'b';
+    $scope.bScore = 0;
+    $scope.wScore = 0;
+    $scope.lines = [1,2,3,4,5,6,7];
+    $scope.radius = 85.0 / 8 / 2;
+    $scope.chips = [
+      {
+          col:3,
+            color:"w",
+            row:3,
+            x:43.75000000000001,
+            y:43.75000000000001
+        },
+        {
+          col:4,
+            color:"w",
+            row:4,
+            x:56.300000000000004,
+            y:56.300000000000004
+        },
+        {
+          col:3,
+            color:"b",
+            row:4,
+            x:43.75000000000001,
+            y:56.300000000000004
+        },
+        {
+          col:4,
+            color:"b",
+            row:3,
+            x:56.300000000000004,
+            y:43.75000000000001
+        },
+      
+    ];
+});
+
+app.directive('cngGame', function() {
+  return {
+      restrict: "A",
+      link: function(scope, element){
+        var svg = element[0];
+        var pt = svg.createSVGPoint();
+        const LENGTH = 8;
+        var currentColor = 'b';
+        
+        function generateBoard() {
+          let arr = [];
+            for(let i=0; i<LENGTH; i++) {
+              let temp = [];
+                for(let j=0; j<LENGTH; j++) {
+                  temp.push({row:i,col:j,isEmpty:true,color:'none'});
+                }
+                arr.push(temp);
+            }
+            
+            arr[3][3].isEmpty = false;
+            arr[3][3].color = 'w';
+            arr[3][3].index = 0;
+            
+            arr[4][4].isEmpty = false;
+            arr[4][4].color = 'w';
+            arr[4][4].index = 1;
+            
+            arr[3][4].isEmpty = false;
+            arr[3][4].color = 'b';
+            arr[3][4].index = 3;
+            
+            arr[4][3].isEmpty = false;
+            arr[4][3].color = 'b';
+            arr[4][3].index = 2;
+            
+            return arr;
+        }
+        
+        var board = generateBoard();
+        
+        function checkChips(pos,dir,valid) {
+          let xDir = dir[0];
+            let yDir = dir[1];
+            
+            let newPos = [];
+            newPos.push(pos[0]);
+            newPos.push(pos[1]);
+            
+            newPos[0] += xDir;
+            newPos[1] += yDir;
+            
+            //console.log(pos,dir,valid,newPos);
+            
+            if(newPos[0] < 0 || newPos[0] >= LENGTH || newPos[1] < 0 || newPos[1] >= LENGTH) {
+              return false;
+            }
+            else if (board[newPos[0]][newPos[1]].isEmpty) {
+              return false;
+            }
+            else if (board[newPos[0]][newPos[1]].color == currentColor && !valid) {
+              return false;
+            }
+            else if (board[newPos[0]][newPos[1]].color == currentColor && valid) {
+              return true;
+            }
+            else if(checkChips(newPos,dir,true)) {
+                return true;
+            }
+        }
+        
+        function isValidLocation(pos) {
+          if (checkChips(pos,[-1,-1],false) ||
+              checkChips(pos,[-1,1],false)  ||
+              checkChips(pos,[1,1],false)   ||
+              checkChips(pos,[1,-1],false)  ||
+              checkChips(pos,[0,1],false)   ||
+              checkChips(pos,[0,-1],false)  ||
+              checkChips(pos,[1,0],false)   ||
+              checkChips(pos,[-1,0],false)) {
+                  return true;
+                }
+        }
+        
+        function getValidSpots() {
+          let validLocations = [];
+          for (let i=0; i < LENGTH; i++) {
+              for (let j=0; j < LENGTH; j++) {
+                  if (board[i][j].isEmpty) {
+                      if (isValidLocation([i,j])) {
+                          validLocations.push([i,j]);
+                        }
+                    }
+                }
+            }
+            return validLocations;
+        }
+        
+        var validLocations = getValidSpots();
+        
+        function isValidSpot(coords, validLocations) {
+          for (let i=0; i < validLocations.length; i++) {
+              if (validLocations[i][0] == coords[0] && validLocations[i][1] == coords[1]) {
+                  return true;
+              }
+            }
+            return false;
+        }
+        
+        function getCoords(cursorpt) {
+            let row = Math.floor((cursorpt.y / 100) * LENGTH);
+            let col = Math.floor((cursorpt.x / 100) * LENGTH);
+            return [row,col];
+        }
+        
+        function coordToPercent(coord) {
+          return 6.1 + coord * 12.55;
+        }
+        
+        function placeChip(coords, color) {
+          let chip = {};
+            chip.row = coords[0];
+            chip.col = coords[1];
+            chip.x = coordToPercent(coords[1]);
+            chip.y = coordToPercent(coords[0]);
+            chip.color = color;
+            //chip.index = scope.chips.length;
+            return chip;
+        }
+        
+        function flipChips(pos,dir,valid) {
+          let xDir = dir[0];
+            let yDir = dir[1];
+            
+            let newPos = [];
+            newPos.push(pos[0]);
+            newPos.push(pos[1]);
+            
+            newPos[0] += xDir;
+            newPos[1] += yDir;
+            
+            console.log(pos,dir,valid,newPos);
+            
+            if(newPos[0] < 0 || newPos[0] >= LENGTH || newPos[1] < 0 || newPos[1] >= LENGTH) {
+              return false;
+            }
+            else if (board[newPos[0]][newPos[1]].isEmpty) {
+              return false;
+            }
+            else if (board[newPos[0]][newPos[1]].color == currentColor && !valid) {
+              return false;
+            }
+            else if (board[newPos[0]][newPos[1]].color == currentColor && valid) {
+              return true;
+            }
+            else if (flipChips(newPos,dir,true)) {
+              let color = scope.chips[board[newPos[0]][newPos[1]].index].color;
+              board[newPos[0]][newPos[1]].color = (color == 'w') ? 'b' : 'w';
+              scope.chips[board[newPos[0]][newPos[1]].index].color = (color == 'w') ? 'b' : 'w';
+                return true;
+            }
+        }
+        
+        function updateBoard(pos) {
+          flipChips(pos,[-1,-1],false); //ul
+            flipChips(pos,[-1,1],false); //ur
+            flipChips(pos,[1,1],false); //dr
+            flipChips(pos,[1,-1],false); //dl
+            
+            flipChips(pos,[0,1],false); //r
+            flipChips(pos,[0,-1],false); //l
+            flipChips(pos,[1,0],false); //d
+            flipChips(pos,[-1,0],false); //u
+            
+        }
+        
+        function updateScore() {
+          let b=0;
+            let w=0;
+            for (let i=0; i < scope.chips.length; i++) {
+              if (scope.chips[i].color == 'b') { b++; }
+                else { w++; }
+            }
+            scope.bScore = b;
+            scope.wScore = w;
+        }
+        
+        element.bind('click', function(evt){
+          pt.x = evt.clientX;
+            pt.y = evt.clientY;
+
+            // The cursor point, translated into svg coordinates
+            let cursorpt =  pt.matrixTransform(svg.getScreenCTM().inverse());
+            console.log("(" + cursorpt.x + ", " + cursorpt.y + ")");
+            let coords = getCoords(cursorpt);
+            console.log(coords, scope.chips);
+            
+            if (validLocations.length == 0) {
+              currentColor = (currentColor == 'w') ? 'b':'w';
+                scope.turn = currentColor;
+              scope.$apply();
+                return;
+            }
+            
+            console.log('validLocations: ', validLocations);
+            if(isValidSpot(coords, validLocations)) {
+              board[coords[0]][coords[1]].isEmpty = false;
+                board[coords[0]][coords[1]].color = currentColor;
+                board[coords[0]][coords[1]].index = scope.chips.length;
+            scope.chips.push(placeChip(coords,currentColor));
+                updateBoard(coords);
+              updateScore();
+                currentColor = (currentColor == 'w') ? 'b':'w';
+                
+                validLocations = getValidSpots();
+                scope.turn = currentColor;
+                //console.log(element);
+              scope.$apply();
+            }
+        });
+      }
+    };
+});
+</script>
+
+</body>
+</html>

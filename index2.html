@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.8.0/firebase.js"></script>
+
+<style>
+  
+  img {
+    height: 25px;
+  }
+  
+  body {
+    font-family: Tahoma, Geneva, sans-serif;
+      background-color: #DDDDDD;
+    color: #222222;
+  }
+  
+  .header, .login, .status, .gameInfo {
+    text-align: center;
+  }
+  
+  .status, .gameInfo {
+    font-size: larger;
+  }
+  
+  .game {
+      background-color:#008866;
+        border: 13px solid black;
+        box-sizing: border-box;
+    }
+    .game:hover {
+      cursor: crosshair;
+    }
+   
+    @keyframes grow-b {
+      from { transform: /*scale(3.1)*/ rotateY(180deg); }
+    }
+    @keyframes grow-w {
+      from { transform: /*scale(3.1)*/ rotateX(180deg); }
+    }
+    
+    .chip-b {
+      animation: grow-b 0.5s;
+        transform: rotateY(0deg);
+        transform-origin: center;
+    }
+    .chip-w {
+      animation: grow-w 0.5s;
+        transform: rotateX(0deg);
+        transform-origin:center;
+    }
+</style>
+
+</head>
+
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyDWzgXMKve8hONHqxkp4DRAIiCpvcIH5-U",
+    authDomain: "game-center-9b383.firebaseapp.com",
+    databaseURL: "https://game-center-9b383.firebaseio.com",
+    projectId: "game-center-9b383",
+    storageBucket: "",
+    messagingSenderId: "608081464193"
+  };
+  firebase.initializeApp(config);
+</script>
+
+<body ng-app="calendar" ng-controller="MainCtrl">
+
+<div id="main" ng-click="">
+  <span class="menu-icon" ng-click="openSideNav()" ng-show="loggedIn">&#9776;</span>
+  <!-- Header for the top of the page -->
+    <div class="header" ng-class="{ 'title-left' : navOpen }">
+        <!-- Shows this if the user is logged in -->
+        <h1 class="title"><span ng-show="name != undefined && name != ''">{{name}}'s</span> Family Calendar</h1>
+
+        <!-- Shows this if the user is not logged in -->
+        <!--<h1 class="title" ng-show="{{name === undefined}}">Your Family Calendar</h1>-->
+    </div>
+
+    <!-- Sign in button if the user is not logged in -->
+    <div ng-show="!signedIn" class="login-section">
+        <!-- Modify these contents if you want to update how the Sign-in looks -->
+		<h3>Welcome to Your Family Calendar. Login with FamilySearch to get a calendar all about your family!</h3>
+		<br>
+        <button class="login-button" ng-click="showSmallLoader = true; doLogin()">Login with FamilySearch</button>
+		<div class="loader-small" ng-show="showSmallLoader"></div>
+		<div class="footer-info">
+			<div>Fhtl Home</div>
+			<div>Contact</div>
+			<div>FamilySearch</div>
+		</div>
+    </div>
+
+    <!-- This part is the calendar part -->
+    <div ng-show="signedIn">
+
+        <!-- Display the month and year of the currently displaying page -->
+        <h1 class="date-title">
+            {{month}} {{year}}
+        </h1>
+
+        <!-- These are buttons that help navigate which month it is. It also can change to today's date -->
+        <div class="calendar-buttons">
+            <button class="btn btn-primary ng-isolate-scope ng-click-active" mwl-date-modifier="" date="viewDate" decrement="calendarView"
+                ng-click="updateMonth()">
+                    Previous
+                    </button>
+            <button class="btn btn-default ng-isolate-scope" mwl-date-modifier="" date="viewDate" set-to-today="" ng-click="updateMonth()">
+                    Today
+                    </button>
+            <button class="btn btn-primary ng-isolate-scope" mwl-date-modifier="" date="viewDate" increment="calendarView" ng-click="updateMonth()">
+                    Next
+                    </button>
+        </div>
+        <br>
+
+        <!-- This is the actual Calendar -->
+        <!-- If you want to change how it looks, all of the files are located in the 'angular-bootstrap-calendar'  -->
+        <div class='container'>
+            <div class='row'>
+                <!--These columns just make sure that the spacing on the page is reasonable  -->
+                <div class='col-1-3'>
+
+                </div>
+                <div class='col-4-9'>
+                    <mwl-calendar view="calendarView" view-date="viewDate" events="events" view-title="calendarTitle" on-event-click="eventClicked(calendarEvent)"
+                        on-event-times-changed="calendarEvent.startsAt = calendarNewEventStart; calendarEvent.endsAt = calendarNewEventEnd"
+                        cell-is-open="true">
+                    </mwl-calendar>
+                </div>
+                <div class='col-10-12' />
+            </div>
+        </div>
+
+        <!-- This will display filters based upon what is currently available -->
+        
+        <!--<input type = 'number' ng-model="generations" min='1' max="8">
+        <button ng-click="getEvents()">getEvents</button>-->
+    </div>
+</div>
+
+<div id="mySidenav" class="sidenav" ng-class="{ 'open-nav' : navOpen}" ng-show="loggedIn">
+  <a href="javascript:void(0)" class="closebtn" ng-click="navOpen = !navOpen">&times;</a>
+  <a href="https://fhtl.byu.edu" target="_blank">Fhtl Home</a>
+  <a href="https://fhtl.byu.edu/#/contact" target="_blank">Contact</a>
+  <a href="#" ng-click="logout()">Logout</a>
+  <div style="margin-left: 30px;margin-top:15px;">
+	<input type = 'number' style="width:40px;text-align:center;" ng-model="generations" min='1' max="8">
+    <button class="btn btn-primary ng-isolate-scope" style="height: 33px;width: 190px;margin-left: 10px;" ng-click="getEvents()"># Of Generations</button>
+  </div>
+  <button ng-show = "eventTypes['Birth'] != undefined" class="btn btn-primary ng-isolate-scope" style="height: 33px; width: 244px; margin: 10px 30px 0px 30px;" ng-click="exporting = true">Export Calendar</button>
+  <hr style="background-color: #bbb;border: 0.5px solid #bbb;">
+  <p class="filter-title" ng-show = "eventTypes['Birth'] != undefined">Filters</p>
+  <div style='column-count:0;margin-left:30px;font-family:courier;font-size:14px;'>
+		<!--<section ng-repeat="(type, color) in eventTypes | orderBy: objectToArray(eventTypes)">-->
+		<section ng-repeat="event in eventArray | orderBy: 'type'">
+			<label class="filter-option">
+					<input type="checkbox" ng-change="onCheckChanged()" ng-model="filterTypes[event.type]">
+					{{ event.type }}
+				</label>
+			<svg height="10" width="10">
+				<circle cx="5" cy="5" r="40" stroke="{{event.color}}" stroke-width="3" fill="{{event.color}}" />
+			</svg>
+		</section>
+	</div>
+</div>
+
+<div class="modal-loading" ng-show = "eventTypes['Birth'] == undefined && loggedIn">
+	<h3>Please wait a moment</h3>
+	<div class="loader"></div>
+</div>
+
+<div class="modal-shadow" ng-show = "eventTypes['Birth'] == undefined && loggedIn"></div>
+
+<div class="modal-loading" ng-show = "exporting">
+	<div class="exit-button" ng-click="exporting = false">x</div>
+	<h3>Export Calendar</h3>
+	<p>Number of years to repeat events for <input type="number" min="1" max="5" ng-model="numYearsRepeat"></p>
+	<!--<p>Click the download button below to download a copy of all your family calendar events. You can import this calendar into google, apple, or any other calendar software.</p>
+	<p><b>Note:</b> once events have been imported to a calendar, they cannot be removed without deleting the whole calendar. Softwares such as google will allow you to create a secondary calendar that can be freely modified without interferring with your primary calendar. We recommend that you import your family calendar to a secondary calendar so you can sync/remove/modify it freely without interfering with your primary calendar.</p>-->
+	<button class="export-button" ng-click="exportCalendar(); exporting = false;">Download Calendar</button>
+	<p style="margin: 15px;">OR</p>
+	<button class="export-button google-button" ng-click="exportToGoogle(); exporting = false;">Export To Google</button>
+</div>
+
+<div class="modal-shadow" ng-show = "exporting"></div>
+     
+</body>
+</html>

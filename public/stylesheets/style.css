@@ -1,0 +1,432 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.container {
+    border: 3px solid black;
+    border-radius: 20px;
+    padding-bottom: 10px;
+}
+
+
+.header, .footer {
+    background-color: #008866;
+    color: white;
+    padding: 15px;   
+}
+
+.header {
+	background-color: #008866;
+    color: white;
+    padding: 15px;
+    position: fixed;
+	z-index: 800;
+    top: 0;
+    left: 0px;
+    /*border-bottom: 1px solid black;*/
+    width: 100%;
+	transition: left .5s;
+	height: 80px;
+	overflow: hidden;
+}
+
+.title {
+  float: center;
+  font-family: broadway;
+  font-size:26px;
+  max-width: 80%;
+  text-overflow: ellipsis;
+  margin-top: 13px;
+  margin-left: 15px;
+  text-align: left;
+}
+
+.game-title {
+	text-align: center;
+	display: inline-block;
+    font-size: 24px;
+    padding-top: 20px;
+    vertical-align: middle;
+    margin-left: 10px;
+	width: 180px;
+}
+
+.calendar-buttons {
+	text-align: center;
+	text-align: center;
+    display: inline-block;
+    padding: 10px;
+    padding-top: 30px;
+    margin: 8px 30px;
+    vertical-align: middle;
+	width: 300px;
+    max-width: calc(100% + 10px);
+}
+
+.cal-month-day {
+    height: 12.5vh !important;
+	min-height: 100px;
+}
+
+.container {
+	width: calc(100% + 10px) !important;
+	border-radius: 0;
+	border: 1px solid #aaa;
+	/*min-width: 400px;*/
+}
+
+.event {
+	width: 15px !important;
+	height: 15px !important;
+}
+
+.cal-day-today span[data-cal-date] {
+    font-size: 1.4em !important;
+}
+
+@media screen and (max-width: 600px) {
+	.event {
+		width: 10px !important;
+		height: 10px !important;
+	}
+}
+
+body {
+    font-family: "Lato", sans-serif;
+	padding: 50px 0px 0px 40px; 
+}
+
+.sidenav {
+    height: calc(100% - 80px);
+    width: 300px;
+    position: fixed;
+    z-index: 999;
+    top: 80px;
+    left: 0;
+    background-color: #fdfdfd;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 20px;
+	border-right: 1px solid #bbb;
+}
+
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #666;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidenav a:hover {
+    color: #000;
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+.sidenav::-webkit-scrollbar {
+	width: 10px;
+	background-color: #fdfdfd;
+}
+
+@keyframes fadeIn {
+	from { opacity: 0 }
+}
+
+.sidenav:hover::-webkit-scrollbar-thumb {
+	background-color: #d5d5d5;
+	animation: fadeIn 0.3s;
+}
+
+.open-nav {
+	width: 300px !important;
+}
+
+.push-left {
+	margin-left: 250px !important;
+}
+
+.title-left {
+	/*left: 0px !important;*/
+}
+
+#main {
+    transition: left .5s;
+    padding: 16px;
+    margin-left: 250px;
+}
+
+.filter-option {
+	color: #666;
+}
+
+.filter-option:hover {
+	cursor: pointer;
+	color: #000;
+}
+
+.closebtn, .menu-icon {
+	visibility: hidden;
+}
+
+.menu-icon {
+	font-size:30px;
+	cursor:pointer;
+	position:fixed;
+	top:20px;
+	left:20px;
+	z-index:900;
+	color:white;
+}
+
+.calendar-buttons {
+	width: 300px;
+	max-width: calc(100% + 10px);
+}
+
+.calendar-buttons button {
+	width: 32%;
+}
+
+.filter-title {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-left: 30px;
+    color: #666;
+    text-decoration: underline;
+	font-style: italic;
+}
+
+.login-section {
+	width: 500px;
+    max-width: calc(100% - 20px);
+    height: 300px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+	text-align: center;
+}
+
+.login-button {
+	width: 300px;
+	max-width: calc(100% - 60px);
+	box-sizing: border-box;
+	padding: 10px;
+	border: none;
+	text-transform: uppercase;
+	color: white;
+	background-color: #008866;
+}
+
+.login-button:hover {
+	background-color: #114488;
+	cursor: pointer;
+}
+
+.modal-shadow {
+	position: fixed;
+	top: -50px;
+	left: -50px;
+	right: -50px;
+	bottom: -50px;
+	width: 200%;
+	height: 200%;
+	overflow: hidden;
+	background-color: rgb(0,0,0);
+	background-color: rgba(0,0,0,0.6);
+	z-index: 1000;
+}
+.modal-loading {
+	position: fixed;
+	width: 470px;
+	max-width: calc(100% - 50px);
+	padding: 15px;
+	left: 0;
+	right: 0;
+	top: 300px;
+	margin: auto;
+	background-color: white;
+	z-index: 1001;
+	text-align: center;
+}
+
+.loader {
+    border: 10px solid #f3f3f3; /* Light grey */
+    border-top: 10px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    animation: spin 3s linear infinite;
+	margin: auto;
+}
+
+.loader-small {
+  border: 6px dashed #f3f3f3;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.exit-button {
+	position: absolute;
+    top: 0;
+    right: 0;
+    width: 22px;
+    height: 22px;
+    display: table-cell;
+    font-size: 20px;
+    line-height: 18px;
+}
+
+.exit-button:hover {
+	cursor: pointer;
+	background-color: red;
+	color: white;
+}
+
+.export-button {
+	width: 300px;
+	max-width: 100%;
+	box-sizing: border-box;
+	padding: 10px;
+	text-transform: uppercase;
+	color: white;
+	background-color: #2266aa;
+	border: none;
+}
+
+.export-button:hover {
+	cursor: pointer;
+	background-color: #114488;
+}
+
+.google-button {
+	background-color: #dd3300;
+}
+
+.google-button:hover {
+	cursor: pointer;
+	background-color: #ff0000;
+}
+
+.footer-info {
+	position: fixed;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: inline-flex;
+    font-size: 18px;
+    justify-content: normal;
+    width: 300px;
+    padding: 0;
+	display: none;
+}
+
+.footer-info div {
+	padding: 4px 8px 4px 8px;
+	border-right: 1px solid black;
+}
+
+.footer-info div:last-child {
+	border: none;
+}
+
+.footer div:hover {
+	text-decoration: underline;
+}
+
+.user-image {
+	margin-left: 30px;
+    width: calc(100% - 60px);
+    height: auto;
+    box-sizing: border-box;
+    padding: 20px;
+    border: 1px solid #aaa;
+    margin-bottom: 15px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+}
+
+@media screen and (max-width: 900px) {
+	.sidenav {
+    	width: 0px;
+		border: none;
+    }
+    #main {
+    	margin-left: -50px;
+    }
+	.header {
+		left: 0px;
+		width: 100%;
+	}
+	.closebtn, .menu-icon {
+		visibility: visible;
+	}
+	.open-nav {
+		border-right: 1px solid #bbb;
+	}
+	.title {
+		margin-left: 55px;
+	}
+	.modal-loading {
+		top: 110px;
+	}
+}
+
+@media screen and (max-width: 500px) {
+	.title {
+		font-size: 20px;
+		margin-top: 16px;
+	}
+}
+
+@media screen and (max-width: 580px) {
+	.calendar-buttons{
+		width: calc(100% + 10px);
+		padding: 0;
+		margin: 8px 0;
+	}
+	.game-title {
+		text-align: center;
+	}
+}
+
+@media screen and (max-width: 350px) {
+	.title {
+		margin-top: 6px;
+	}
+}
+
+@media screen and (max-height: 480px) {
+	.login-section {
+		top: 84px;
+		bottom: auto;
+	}
+}
+
