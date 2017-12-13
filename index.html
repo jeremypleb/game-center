@@ -10,12 +10,20 @@
   }
   
   body {
-    font-family: Tahoma, Geneva, sans-serif
+    font-family: Tahoma, Geneva, sans-serif;
+      background-color: #DDDDDD;
+    color: #222222;
   }
   
-  .header, .login, .status {
+  .header, .login, .status, .gameInfo {
     text-align: center;
   }
+  
+  .status, .gameInfo {
+    font-size: larger;
+  }
+  
+  
 
 	.game {
     	background-color:#008866;
@@ -92,7 +100,7 @@
         <p>Welcome, {{displayName}} <img ng-src="{{photoURL}}" /></p>
         <button ng-click="toggleSignIn()">Log Out</button>
       </div>
-	<p>{{turn}}'s turn -- black: {{bScore}} -- white: {{wScore}}</p>
+	<p class="gameInfo">{{turn}}'s turn -- black: {{bScore}} -- white: {{wScore}}</p>
     
     <svg width='100%' height='100%' viewBox="0 0 100 100" preserveAspectRatio="none" class="game" cng-game>
         
