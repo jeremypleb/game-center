@@ -4,6 +4,14 @@
 <body>
 
 <style>
+  
+  img {
+    height: 100px;
+  }
+  
+  
+  
+  
 	.game {
     	background-color:#008866;
         border: 13px solid black;
@@ -64,16 +72,17 @@
 </script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
-  
+  <div class="header">
   <h1>TEH GAME CENTER</h1>
   <h2>BEAT THEM N00BZ</h2>
+  </div>
 
-    <div ng-show="!loggedIn">
+    <div class="login" ng-show="!loggedIn">
     LOG IN, nerd
       <button ng-click="toggleSignIn()">Log In</button>
     
     </div>
-    <div ng-show="loggedIn">
+    <div class="main" ng-show="loggedIn">
       <div>
         <p>Welcome, {{displayName}} <img ng-src="{{photoURL}}" /></p>
         <button ng-click="toggleSignIn()">Log Out</button>
