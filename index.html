@@ -71,6 +71,10 @@
     
     </div>
     <div ng-show="loggedIn">
+      <div>
+        <p>Welcome, {{displayName}}</p>
+        <button ng-click="toggleSignIn">Log Out</button>
+      </div>
 	<p>{{turn}}'s turn -- black: {{bScore}} -- white: {{wScore}}</p>
     
     <svg width='100%' height='100%' viewBox="0 0 100 100" preserveAspectRatio="none" class="game" cng-game>
@@ -102,9 +106,7 @@
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope) {
     $scope.loggedIn = false;
-  
-  
-  
+
     $scope.toggleSignIn = function () {
         if (!firebase.auth().currentUser) {
           // [START createprovider]
@@ -119,6 +121,7 @@ app.controller('myCtrl', function($scope) {
         } else {
           // [START signout]
           firebase.auth().signOut();
+          $scope.loggedIn = false;
           // [END signout]
         }
         // [START_EXCLUDE]
@@ -162,12 +165,12 @@ app.controller('myCtrl', function($scope) {
       // [END getidptoken]
       // Listening for auth state changes.
       // [START authstatelistener]
-      firebase.auth().onAuthStateChanged(function(user) {
+      firebase.auth().onAuthStateChanged(function(user) {  
         if (user) {
           
           $scope.loggedIn = true;
           // User is signed in.
-          var displayName = user.displayName;
+          $scope.displayName = user.displayName;
           var email = user.email;
           var emailVerified = user.emailVerified;
           var photoURL = user.photoURL;
