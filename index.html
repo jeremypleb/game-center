@@ -64,15 +64,18 @@
 </script>
 
 <div ng-app="myApp" ng-controller="myCtrl">
+  
+  <h1>TEH GAME CENTER</h1>
+  <h2>BEAT THEM N00BZ</h2>
 
     <div ng-show="!loggedIn">
-    LOG IN
+    LOG IN, nerd
       <button ng-click="toggleSignIn()">Log In</button>
     
     </div>
     <div ng-show="loggedIn">
       <div>
-        <p>Welcome, {{displayName}}</p>
+        <p>Welcome, {{displayName}} <img ng-src="{{photoURL}}" /></p>
         <button ng-click="toggleSignIn()">Log Out</button>
       </div>
 	<p>{{turn}}'s turn -- black: {{bScore}} -- white: {{wScore}}</p>
@@ -106,6 +109,7 @@
 var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope) {
     $scope.loggedIn = false;
+    $scope.displayName = '';
 
     $scope.toggleSignIn = function () {
         if (!firebase.auth().currentUser) {
@@ -170,37 +174,24 @@ app.controller('myCtrl', function($scope) {
           
           $scope.loggedIn = true;
           // User is signed in.
-          $scope.displayName = user.displayName;
-          var email = user.email;
-          var emailVerified = user.emailVerified;
-          var photoURL = user.photoURL;
-          var isAnonymous = user.isAnonymous;
-          var uid = user.uid;
-          var providerData = user.providerData;
-          // [START_EXCLUDE]
-//          document.getElementById('quickstart-sign-in-status').textContent = 'Signed in';
-//          document.getElementById('quickstart-sign-in').textContent = 'Sign out';
-//          document.getElementById('quickstart-account-details').textContent = JSON.stringify(user, null, '  ');
-          // [END_EXCLUDE]
+          $scope.displayName = user.displayName || user.email.split('@')[0];
+          $scope.photoURL = user.photoURL
+//          var email = user.email;
+//          var emailVerified = user.emailVerified;
+//          var photoURL = user.photoURL;
+//          var isAnonymous = user.isAnonymous;
+//          var uid = user.uid;
+//          var providerData = user.providerData;
+
         } else {
           
           $scope.loggedIn = false;
-          // User is signed out.
-          // [START_EXCLUDE]
-//          document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
-//          document.getElementById('quickstart-sign-in').textContent = 'Sign in with GitHub';
-//          document.getElementById('quickstart-account-details').textContent = 'null';
-//          document.getElementById('quickstart-oauthtoken').textContent = 'null';
-          // [END_EXCLUDE]
+
         }
         
         $scope.$apply()
-        // [START_EXCLUDE]
-//        document.getElementById('quickstart-sign-in').disabled = false;
-        // [END_EXCLUDE]
+
       });
-      // [END authstatelistener]
-//      document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignIn, false);
     }
     
     $scope.initFirebase();
