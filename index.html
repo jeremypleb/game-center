@@ -6,12 +6,17 @@
 <style>
   
   img {
-    height: 100px;
+    height: 25px;
   }
   
+  body {
+    font-family: Tahoma, Geneva, sans-serif
+  }
   
-  
-  
+  .header, .login, .status {
+    text-align: center;
+  }
+
 	.game {
     	background-color:#008866;
         border: 13px solid black;
@@ -83,7 +88,7 @@
     
     </div>
     <div class="main" ng-show="loggedIn">
-      <div>
+      <div class="status">
         <p>Welcome, {{displayName}} <img ng-src="{{photoURL}}" /></p>
         <button ng-click="toggleSignIn()">Log Out</button>
       </div>
